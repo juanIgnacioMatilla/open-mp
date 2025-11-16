@@ -173,6 +173,7 @@ _Implementar las posibles optimizaciones clásicas para problemas recursivos en 
 reimplementá lo necesario y probá el efecto de las optimizaciones midiendo nuevamente los tiempos. ¿Qué cambios hay?_
 
 **Versión iterativa `fib_iter.c`**
+
 Se probó la versión iterativa secuencial del algoritmo de Fibonacci para distintos valores de entrada:
 ```bash
 $ ./fib_iter 30
@@ -191,6 +192,7 @@ Tiempo = 0.000002 segundos
 ```
 
 Análisis de tiempos
+
 Los tiempos son extremadamente bajos (del orden de 1–2 microsegundos) incluso para valores muy grandes como 90 y 120.
 Esto ocurre porque:
 - La versión iterativa tiene complejidad O(n).
@@ -234,8 +236,6 @@ Análisis de tiempos
 
 
 Los tiempos obtenidos son casi idénticos a los de la versión iterativa (del orden de 1 a 3 microsegundos), incluso para valores tan grandes como 90 o 120.
-
-
 Esto se explica porque:
 - Como vimos la versión recursiva básica realiza O(2ⁿ) llamadas. Con memoization, cada valor de Fibonacci se calcula solo una vez, por lo que la complejidad se reduce a O(n).
 - El árbol recursivo se aplana y deja de crecer exponencialmente.
@@ -314,7 +314,7 @@ Como múltiples tareas pueden encontrar soluciones simultáneamente, la actualiz
 evitando condiciones de carrera al incrementar la variable solutions. De esta forma, se logra un paralelismo completo del árbol de búsqueda, 
 análogo al paralelismo aplicado en la versión recursiva paralela de Fibonacci. Para más detalle de la implementación ver el archivo `queens_par.c`.
 
-## e) N-Reinas Secuenciasl vs Completamente paralelizado
+## e) N-Reinas Secuencial vs Completamente paralelizado
 
 _Como en el caso de c), compará el tiempo del programa secuencial y el paralelo para distintos tamaños de tableros. 
 Podés también utilizar distinto número de hilos si preferís. ¿Qué comportamiento observás?_
@@ -328,7 +328,7 @@ y en particular que efecto tiene el “aumento del paralelismo” para esta impl
 
 Al observar el gráfico, se ve que la versión paralela no sólo no mejora al algoritmo secuencial, 
 sino que incluso empeora significativamente a medida que se aumentan los hilos. Si bien para N menores a 11 
-las diferencias entre todas las versiones son mínimas y a partir de N=12 el tiempo empieza a crecer a mayor cantidad de hilos que se utilizan. 
+las diferencias entre todas las versiones son mínimas, a partir de N=12 el tiempo empieza a crecer a mayor cantidad de hilos que se utilizan. 
 En particular, con 8 hilos los tiempos crecen abruptamente debido a la enorme cantidad de tareas recursivas generadas y al costo de sincronización entre ellas, 
 igual que ocurría para la primera versión de Fibonacci. En resumen, el experimento confirma que el paralelismo con tasks es altamente ineficiente 
 para N-Reinas cuando se paraleliza todo el árbol por el overhead que incorpora OpenMP.
@@ -352,12 +352,11 @@ el impacto real de la optimización.
 
 <img width="1547" height="893" alt="image" src="https://github.com/user-attachments/assets/22a85121-2d36-4552-9053-c7125f89b3b5" />
 
-El gráfico muestra claramente que el thresholding mejora sustancialmente el rendimiento frente a la versión completamente paralela sin control, 
-y que incluso logra superar al algoritmo secuencial en tamaños de tablero moderados. Para N<=12, ambas versiones son muy rápidas y las diferencias 
+El gráfico muestra claramente que el thresholding mejora sustancialmente el rendimiento, logrando superar al algoritmo secuencial en tamaños de tablero mas elevados. Para N<=12, ambas versiones son muy rápidas y las diferencias 
 son mínimas debido al bajo costo computacional. Sin embargo, a partir de N=13 y especialmente en N=14 y N=15, la versión secuencial crece abruptamente, 
 mientras que la versión paralela con thresholding mantiene tiempos mucho menores: el promedio entre distintos valores de TH se mantiene alrededor de 4 segundos en N=15, 
 frente a más de 20 segundos de la versión secuencial. Esto confirma que limitar la paralelización a los primeros niveles del árbol reduce radicalmente la explosión de tareas, 
-disminuye el overhead y permite aprovechar mejor los hilos disponibles, resultando en una mejora real de performance para N-Queens. Esto es debido a que ahora si se justifica 
+disminuye el overhead y permite aprovechar mejor los hilos disponibles, resultando en una mejora real de performance para N-Reinas. Esto es debido a que ahora si se justifica 
 la creación de tasks para paralelizar carga ya que los primeros niveles del árbol para un N grande si requieren una cantidad considerable de computo.
 
 Para analizar el efecto del parámetro threshold en la versión paralela del algoritmo de N-Reinas, 
@@ -389,7 +388,7 @@ donde la tarea a paralelizar implica muy poco computo, no justifica la creación
 genera un costo de computo mayor que simplemente ejecutar todo de manera secuencial. Sin embargo cuando el algoritmo escala en tareas mas pesadas, 
 como en el caso de N-Reinas con un N relativamente alto que genera que las tareas de los nodos de las primeras filas si sean mas pesadas en computo, 
 entonces la paralelización de esas tareas pesadas si justifican el costo de paralelizar el codigo, resultando en una mayor eficiencia que el codigo secuencial. 
-Metafóricamente es como si la paralelización fuera una especie de “costo fijo” entre muchas comillas, donde para justificarse se requiere cierto nivel de peso en el computo de la parte paralelizable, 
+Metafóricamente es como si la paralelización fuera una especie de “costo fijo”, donde para justificarse se requiere cierto nivel de peso en el computo de la parte paralelizable, 
 de lo contrario solo genera mas overhead que beneficios.
 
 
